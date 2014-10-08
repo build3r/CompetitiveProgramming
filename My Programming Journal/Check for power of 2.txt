@@ -1,0 +1,7 @@
+if x=a power of 2
+then x AND (x-1) will give u 0;
+
+that is 
+say x=4 =100
+	x-1= 011
+	AND= 000 always
