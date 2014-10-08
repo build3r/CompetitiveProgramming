@@ -1,0 +1,444 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head>
+
+<meta name="Keywords" content="programming, contest, coding, judge">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Distribution" content="Global">
+<meta name="Robots" content="index,follow">
+
+<link rel="stylesheet" href="./football _html/6253820.css" type="text/css">
+<link rel="stylesheet" href="./football _html/15405824.css" type="text/css">
+
+<title>Programming Contest</title>
+	
+<script type="text/javascript" src="./football _html/12378965.3.1.js"></script>
+<script type="text/javascript" src="./football _html/15345209.form.js"></script>
+<script type="text/javascript" src="./football _html/1737294.timers-1.1.2.js"></script>
+<!--
+* @copyright (c) 2008 Nicolo John Davis
+* @license http://opensource.org/licenses/gpl-license.php GNU Public License
+-->
+
+<script type="text/javascript">
+<!--
+
+var currentTime = new Date("June 30, 2013 13:57:37");var startTime = new Date("June 30, 2013 12:00:00");var endTime = new Date("July 01, 2013 12:00:00");
+var getLeaderInterval = 10000;
+var getChatInterval = 1000;
+
+var diff1 = startTime - currentTime;
+var diff2 = endTime - currentTime;
+var diff = 0;
+
+function getLeaders()
+{
+	$.get("getleaders.php", function(data){
+	  $("#leaders").html(data);
+	  });
+}
+
+function getDetails()
+{
+	$.get("getdetails.php", function(data){
+	  $("#details").html(data);
+	  });
+}
+
+function getScores()
+{
+	$.get("getscores.php", function(data){
+	  $("#scores").html(data);
+	  });
+}
+
+function getSubmissions()
+{
+	$.get("getsubmissions.php", function(data){
+	  $("#submissions").html(data);
+	  });
+}
+
+function getAnnouncements()
+{
+	$.get("getannouncements.php", function(data){
+	  $("#announcements").html(data);
+	  });
+}
+
+function getProblemStats()
+{
+	$.get("statistics/getproblemstats.php", function(data){
+	  $("#problemstats").html(data);
+	  });
+}
+
+function getLeader()
+{
+	$.get("statistics/getleader.php", function(data){
+	  $("#leader").html(data);
+	  });
+}
+
+function dispTime() 
+{
+	if(diff1>0)
+	{
+		$("#timeheading").text('Contest starts in');			
+		diff = diff1;
+	}
+	else if(diff2>0)
+	{
+		$("#timeheading").text('Contest ends in');			
+		diff = diff2;
+	}
+	else
+	{
+		$("#timeheading").text('Contest over');			
+		diff = 0;
+	}
+
+	diff = Math.floor(diff/1000);
+
+	var d = Math.floor(diff/(3600*24));
+	diff = diff - d * 3600 *24;
+	var h = Math.floor(diff/3600);
+	var m = Math.floor((diff/60)%60);
+	var s = Math.floor(diff%60);
+
+	var hh = h;
+	var mm = m;
+	var ss = s;
+	if(h<10) hh = '0' + h;
+	if(m<10) mm = '0' + m;
+	if(s<10) ss = '0' + s;
+
+	var str = "<strong>"+hh+":"+mm+":"+ss+"</strong>";
+
+	if(d > 1)
+		str = "<strong>" + d + " days</strong>";
+	else if(d == 1)
+		str = "<strong>" + d + " day</strong>";
+
+	$("#time").html(str);
+
+	if(diff1 > 0)
+	{
+		diff1 = diff1-1000;
+		if(diff1 <= 0)
+		{
+			alert('Contest has started');
+			window.location.reload();
+		}
+	}
+
+	if(diff2 > 0)
+	{
+		diff2 = diff2-1000;
+		if(diff2 <= 0)
+		{
+			alert('Contest has ended');
+			setTimeout("reloadPage()", 2000);
+		}
+	}
+}
+
+function reloadPage() {
+	window.location.reload();
+}
+
+function messagebox(text)
+{
+	$(".messagebox").text(text);
+	$(".messagebox").hide();
+	$(".messagebox").slideDown("slow").oneTime("5s", function() { $(this).slideUp("fast") });
+	$(".messagebox").click( function() { $(this).slideUp("fast"); } );
+}
+
+-->
+</script>
+<script type="text/javascript">
+<!--
+
+function onSucess(data)
+{
+	if(data.verdict == 0)
+	{
+		$('#status' + data.problemid).attr('class', 'accepted');
+		$('#upload' + data.problemid).hide();
+		$('#status' + data.problemid).html('<strong>Accepted</strong>');
+		$('#status' + data.problemid).hide();
+		$('#status' + data.problemid).fadeIn('slow');
+
+		messagebox('Accepted');
+
+		getDetails();
+		getLeaders();
+	}
+	else if(data.verdict == 1)
+	{
+		$('#status' + data.problemid).attr('class', 'compile');
+		$('#status' + data.problemid).html('<strong>Compile Error</strong>');
+		$('#status' + data.problemid).hide();
+		$('#status' + data.problemid).fadeIn('slow');
+
+		messagebox('Compile Error');
+	}
+	else if(data.verdict == 2)
+	{
+		$('#status' + data.problemid).attr('class', 'wrong');
+		$('#status' + data.problemid).html('<strong>Wrong Answer</strong>');
+		$('#status' + data.problemid).hide();
+		$('#status' + data.problemid).fadeIn('slow');
+
+		messagebox('Wrong Answer');
+	}
+	else if(data.verdict == 3)
+	{
+		$('#status' + data.problemid).attr('class', 'time');
+		$('#status' + data.problemid).html('<strong>Time Limit</strong>');
+		$('#status' + data.problemid).hide();
+		$('#status' + data.problemid).fadeIn('slow');
+
+		messagebox('Time Limit Exceeded');
+	}
+	else if(data.verdict == 4)
+	{
+		$('#status' + data.problemid).attr('class', 'invalid');
+		$('#status' + data.problemid).html('<strong>Invalid File</strong>');
+		$('#status' + data.problemid).hide();
+		$('#status' + data.problemid).fadeIn('slow');
+
+		messagebox('Invalid File');
+	}
+}
+
+function onEdit()
+{
+	$('#editpanel').html( '<button id="save">Save</button> <button id="cancel">Cancel</button>' );
+	$('#save').click(onSave);
+	$('#cancel').click(onCancel);
+
+	//This will return tabn where n is the problem number
+	var problem = $('body').attr('id'); 
+	//We extract the number from the above
+	problem = problem[3];
+
+	$.get('admin/modifyproblem.php', {problemid: problem, mode: 'get'}, function(data) {
+			$('#statementpanel').html( '<textarea id="statement" style="width: 100%"></textarea>' );
+			$('#statement').text(data);
+		});
+}
+
+function onCancel()
+{
+	$('#editpanel').html( '<button id="edit">Edit</button>' );
+	$('#edit').click(onEdit);
+
+	//This will return tabn where n is the problem number
+	var problem = $('body').attr('id'); 
+	//We extract the number from the above
+	problem = problem[3];
+
+	$.get('admin/modifyproblem.php', {problemid: problem, mode: 'get'}, function(data) {
+			$('#statementpanel').html( '<code class="statement"></code>' );
+			$('code.statement').html(data);
+		});
+}
+
+function onSave()
+{
+	$('#editpanel').html( '<button id="edit">Edit</button>' );
+	$('#edit').click(onEdit);
+
+	var st = $('#statement').val();
+
+	//This will return tabn where n is the problem number
+	var problem = $('body').attr('id'); 
+	//We extract the number from the above
+	problem = problem[3];
+
+	$.post('admin/modifyproblem.php', {problemid: problem, mode: 'put', statement: st}, function(data) {
+			$('#statementpanel').html( '<code class="statement"></code>' );
+			$('code.statement').html(data);
+		});
+}
+
+$(document).ready(function() { 
+		dispTime();
+		getLeaders();
+		getDetails();
+		setInterval("dispTime()", 1000);  
+		setInterval("getLeaders()", getLeaderInterval);  
+		setInterval("getDetails()", getLeaderInterval);  
+
+		$('.uploadform').ajaxForm({
+				dataType: 'json',
+				success: onSucess
+			});
+
+		$('#edit').click(onEdit);
+	} );
+
+-->
+</script>
+
+<link></head>
+
+<body class="menu2" id="tab3">
+<!-- wrap starts here -->
+<div id="wrap">
+		
+		<!--header -->
+		<!--
+* @copyright (c) 2008 Nicolo John Davis
+* @license http://opensource.org/licenses/gpl-license.php GNU Public License
+-->
+
+<div id="header">			
+	<h1 id="logo-text"><a href="http://advait.homelinux.net/onj/index.php">Programming Contest</a></h1>		
+	<p id="slogan" style="margin-left: 420px">powered by <a style="color:white; text-decoration: none; font-weight: bold" href="https://sourceforge.net/projects/onj">ONJ</a></p>		
+</div>
+	
+
+		<!-- menu -->	
+		<!--
+* @copyright (c) 2008 Nicolo John Davis
+* @license http://opensource.org/licenses/gpl-license.php GNU Public License
+-->
+
+<div id="menu">
+	<ul>
+				<li id="menu1"><a href="http://advait.homelinux.net/onj/index.php">Dashboard</a></li>		<li id="menu2"><a href="http://advait.homelinux.net/onj/problem.php">Problems</a></li>		<li id="menu3"><a href="http://advait.homelinux.net/onj/submissions.php">Submissions</a></li>		<li id="menu4"><a href="http://advait.homelinux.net/onj/scores.php">Scoreboard</a></li>		<li id="menu5"><a href="http://advait.homelinux.net/onj/faq.php">FAQ</a></li>	
+		<li id="menu6"><a href="http://advait.homelinux.net/onj/chat.php">Chat</a></li>				<li id="menu8"><a href="http://advait.homelinux.net/onj/logout.php">Logout</a></li>	</ul>
+</div>					
+			
+		<!-- content-wrap starts here -->
+		<div id="content-wrap">
+				
+			<div id="main">
+
+				<div class="messagebox" style="display: none"> </div>
+				
+				<ul id="tabnav"><li class="tab1"><a href="http://advait.homelinux.net/onj/problem.php?id=1">Problem 1</a></li>
+<li class="tab2"><a href="http://advait.homelinux.net/onj/problem.php?id=2">Problem 2</a></li>
+<li class="tab3"><a href="http://advait.homelinux.net/onj/problem.php?id=3">Problem 3</a></li>
+<li class="tab4"><a href="http://advait.homelinux.net/onj/problem.php?id=4">Problem 4</a></li>
+</ul><h2>Problem 3</h2>
+<table style="margin-top: 20px; border: 0;"><tbody><tr><td id="upload3" class="submitform"><form id="upload3" class="uploadform" action="http://advait.homelinux.net/onj/processfile.php" method="post" enctype="multipart/form-data">
+		<input type="file" name="3"><input type="submit" value="Submit Solution">
+		</form></td><td id="status3" class="none"><strong>-</strong></td></tr></tbody></table><p id="statementpanel"><code class="statement"></code></p><pre><h3><code class="statement">football</code></h3><code class="statement">
+Who's interested in football?
+Rayne Wooney has been one of the top players for his football 
+club for the last few years. But unfortunately, he got injured during 
+a game a few months back and has been out of play ever since.
+
+He's got proper treatment and is eager to go out and play for his 
+team again. Before doing that, he has to prove to his fitness to the 
+coach and manager of the team. Rayne has been playing practice 
+matches for the past few days. He's played N practice matches in all.
+
+He wants to convince the coach and the manager that he's improved 
+over time and that his injury no longer affects his game. To increase 
+his chances of getting back into the team, he's decided to show them 
+stats of any 2 of his practice games. The coach and manager will look 
+into the goals scored in both the games and see how much he's
+improved. If the number of goals scored in the 2nd game(the game which 
+took place later)is greater than that in 1st, then he has a chance of getting 
+in. Tell Rayne what is the maximum improvement in terms of goal difference 
+that he can show to maximize his chances of getting into the team. If he 
+hasn't improved over time, he's not fit to play. Scoring equal number of 
+goals in 2 matches will not be considered an improvement. Also, he will
+be declared unfit if he doesn't have enough matches to show an 
+improvement.
+
+
+<em>Input</em>
+
+The first line of the input contains a single integer T, the number of test cases.
+ Each test case begins with a single integer N, the number of practice matches
+ Rayne has played.
+The next line contains N integers. The ith integer, gi, on this line represents the 
+number of goals Rayne scored in his ith practice match. The matches are given
+in chronological order i.e. j &gt; i means match number j took place after match
+ number i.
+
+<em>Output</em>
+For each test case output a single line containing the maximum goal
+ difference that Rayne can show to his coach and manager. If he's 
+not fit yet, print "UNFIT".
+
+<em>Sample Input</em>
+3
+6
+3 7 1 4 2 4
+5
+5 4 3 2 1
+5
+4 3 2 2 3
+<em>Sample Output</em>
+4
+UNFIT
+1
+<em>Explanation</em>
+In the first test case, Rayne can choose the first and second game. 
+Thus he gets a difference of 7-3=4 goals. Any other pair would give 
+him a lower improvement. In the second test case, Rayne has not been 
+improving in any match. Thus he's declared UNFIT.
+</code></pre><code class="statement">
+				
+				
+				
+				
+</code><p></p> 
+				
+			</div>
+			
+			<div id="sidebar">
+				
+									 <h3>Point Value</h3>				
+					 <ul class="sidemenu">
+					 <li><strong>10</strong></li>			 
+					 </ul>					
+					<!--
+* @copyright (c) 2008 Nicolo John Davis
+* @license http://opensource.org/licenses/gpl-license.php GNU Public License
+-->
+
+<h3 id="timeheading">Contest ends in</h3>
+<ul class="sidemenu">
+	<li id="time"><strong>22:02:10</strong></li>
+</ul>
+
+
+	<h3>Details</h3>
+	<span id="details">	<ul class="sidemenu">				
+		<li>
+		<div style="position: relative"><span>shabaz</span><span style="position: absolute; right: 0px">0</span></div>		</li>						
+	</ul>	</span>
+
+	<h3>Leaderboard</h3>
+	<span id="leaders"><ul class="sidemenu"><li style="position: relative"><span>saurabh</span><span style="position: absolute; right: 0px">0</span></li><li style="position: relative"><span>sujeet325</span><span style="position: absolute; right: 0px">0</span></li><li style="position: relative"><span>shabaz</span><span style="position: absolute; right: 0px">0</span></li></ul></span>
+
+			</div> 
+		
+		<!-- content-wrap ends here -->	
+		</div>
+					
+		<!--footer starts here-->
+		<div id="footer">
+			<!--
+* @copyright (c) 2008-2009 Nicolo John Davis
+* @license http://opensource.org/licenses/gpl-license.php GNU Public License
+-->
+
+<p> 
+©2008-2009 <strong>Nicolo Davis</strong> <br> 
+CSS by <a href="http://www.styleshout.com/">styleshout</a> | ONJ uses <a href="http://jquery.com/">jQuery</a> | <a href="http://code.google.com/p/flot/">flot</a> | <a href="http://unraveled.com/publications/css_tabs/">CSS Tabs 2.0</a>
+</p>
+		</div>	
+
+<!-- wrap ends here -->
+</div>
+
+
+
+</body></html>
